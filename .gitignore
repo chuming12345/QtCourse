@@ -1,0 +1,16 @@
+# Qt build artifacts
+build/
+.qtcreator/
+*.pro.user
+*.o
+*.obj
+*.exe
+Makefile
+Makefile.*
+release/
+debug/
+
+# Qt generated helpers (keep ui_*.h if already part of sources)
+moc_*.cpp
+moc_*.h
+qrc_*.cpp

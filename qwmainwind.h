@@ -2,10 +2,11 @@
 #define QWMAINWIND_H
 
 #include <QMainWindow>
-#include    <QLabel>
-#include    <QProgressBar>
-#include    <QSpinBox>
-#include    <QFontComboBox>
+#include <QLabel>
+#include <QProgressBar>
+#include <QSpinBox>
+#include <QFontComboBox>
+#include "qwtextedit.h"
 
 namespace Ui {
 class QWMainWind;
@@ -16,43 +17,79 @@ class QWMainWind : public QMainWindow
     Q_OBJECT
 
 private:
-    QString     fCurFileName;//当前文件名
-    QLabel      *fLabCurFile;//状态栏里显示当前文件的Label
-    QProgressBar    *progressBar1;//状态栏上的进度条
+    QString      fCurFileName;       // 当前文件名
+    QLabel       *fLabCurFile;       // 状态栏：当前文件标签
+    QProgressBar *progressBar1;       // 状态栏：字体大小进度条
+    QSpinBox     *spinFontSize;       // 工具栏：字体大小
+    QFontComboBox*comboFont;          // 工具栏：字体名称
 
-    QSpinBox        *spinFontSize;//   字体大写
-    QFontComboBox   *comboFont;//字体名称
+    // 新增的 Action
+    QAction *actSave;
+    QAction *actSaveAs;
+    QAction *actUndo;
+    QAction *actRedo;
+    QAction *actSelectAll;
+    QAction *actFind;
+    QAction *actReplace;
+    QAction *actAutoWrap;
+    QAction *actLineNumber;
+    QAction *actBgColor;
+    QAction *actViewToolBar;
+    QAction *actViewStatusBar;
 
+    QWidget *m_findDlg;               // 查找对话框
+    QWidget *m_replaceDlg;            // 替换对话框
 
-    void    updateCurFile(QString aFile);//更新当前文件名，并更新状态栏提示
-    void    iniUI(); //程序设计的UI初始化
-    void    iniSignalSlots(); //手工关联信号与槽
-    void    createNew();
+    void updateCurFile(QString aFile);// 更新当前文件名 + 状态栏
+    void iniUI();                     // UI 初始化（含新增菜单/动作）
+    void iniSignalSlots();            // 信号与槽关联
+    void saveToFile(QString aFile);   // 实际写文件
+    void setTextModified(bool m);     // 更新窗口标题 [*]
 
 public:
     explicit QWMainWind(QWidget *parent = 0);
     ~QWMainWind();
 
+    QWTextEdit *m_edit;               // 中央编辑控件（带行号）
+
 private slots:
-//UI界面设计生成的槽函数
-    void on_actFontBold_triggered(bool checked);  //粗体Action
-    void on_actFontItalic_triggered(bool checked); //斜体Action
-    void on_actFontUnder_triggered(bool checked);   //下划线Action
-
-    void on_actNew_triggered();//新建文件
-    void on_actOpen_triggered();//打开文件
-
-    void on_actFont_triggered();//字体选择对话框
-
-    void on_txtEdit_selectionChanged();  //当前选择的文字发生变化,更新粗体、斜体、下划线3个action的checked状态
-    void on_txtEdit_copyAvailable(bool b);//有文字可copy时更新cut,copy的Enable状态
-
-    void on_actToolbarLab_triggered(bool checked); //设置工具栏按钮样式
-//  自定义槽函数
-    void on_spinBoxFontSize_valueChanged(int aFontSize);//改变字体大小的SpinBox的响应
-    void on_comboFont_currentIndexChanged(const QString &arg1);//FontCombobox的响应，选择字体名称
-
+    // UI 设计器生成的槽
+    void on_actFontBold_triggered(bool checked);
+    void on_actFontItalic_triggered(bool checked);
+    void on_actFontUnder_triggered(bool checked);
+    void on_actNew_triggered();
+    void on_actOpen_triggered();
+    void on_actFont_triggered();
+    void on_actToolbarLab_triggered(bool checked);
+    void on_spinBoxFontSize_valueChanged(int aFontSize);
+    void on_comboFont_currentIndexChanged(const QString &arg1);
     void on_actAbout_triggered();
+
+    // 文本编辑相关
+    void on_txtEdit_selectionChanged();
+    void on_txtEdit_copyAvailable(bool b);
+    void on_document_modified(bool m);
+
+    // 新增功能槽
+    void on_actSave_triggered();
+    void on_actSaveAs_triggered();
+    void on_actUndo_triggered();
+    void on_actRedo_triggered();
+    void on_actSelectAll_triggered();
+    void on_actFind_triggered();
+    void on_actReplace_triggered();
+    void on_actAutoWrap_triggered(bool checked);
+    void on_actLineNumber_triggered(bool checked);
+    void on_actBgColor_triggered();
+    void on_actViewStatusBar_triggered(bool checked);
+    void on_actViewToolBar_triggered(bool checked);
+
+    // 查找/替换回调
+    void doFind(const QString &text, bool caseSensitive);
+    void doReplace(const QString &find, const QString &replace, bool all);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::QWMainWind *ui;

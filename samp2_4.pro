@@ -13,9 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        qwmainwind.cpp
+        qwmainwind.cpp\
+        qwtextedit.cpp\
+        finddialog.cpp\
+        replacedialog.cpp
 
-HEADERS  += qwmainwind.h
+HEADERS  += qwmainwind.h\
+        qwtextedit.h\
+        finddialog.h\
+        replacedialog.h
 
 FORMS    += qwmainwind.ui
 

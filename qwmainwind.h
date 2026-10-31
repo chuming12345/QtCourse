@@ -8,6 +8,9 @@
 #include <QFontComboBox>
 #include "qwtextedit.h"
 
+class FindDialog;
+class ReplaceDialog;
+
 namespace Ui {
 class QWMainWind;
 }
@@ -37,8 +40,8 @@ private:
     QAction *actViewToolBar;
     QAction *actViewStatusBar;
 
-    QWidget *m_findDlg;               // 查找对话框
-    QWidget *m_replaceDlg;            // 替换对话框
+    FindDialog   *m_findDlg    = nullptr;   // 查找对话框
+    ReplaceDialog *m_replaceDlg = nullptr;   // 替换对话框
 
     void updateCurFile(QString aFile);// 更新当前文件名 + 状态栏
     void iniUI();                     // UI 初始化（含新增菜单/动作）
@@ -71,18 +74,18 @@ private slots:
     void on_document_modified(bool m);
 
     // 新增功能槽
-    void on_actSave_triggered();
-    void on_actSaveAs_triggered();
-    void on_actUndo_triggered();
-    void on_actRedo_triggered();
-    void on_actSelectAll_triggered();
-    void on_actFind_triggered();
-    void on_actReplace_triggered();
-    void on_actAutoWrap_triggered(bool checked);
-    void on_actLineNumber_triggered(bool checked);
-    void on_actBgColor_triggered();
-    void on_actViewStatusBar_triggered(bool checked);
-    void on_actViewToolBar_triggered(bool checked);
+    void slotSave();
+    void slotSaveAs();
+    void slotUndo();
+    void slotRedo();
+    void slotSelectAll();
+    void slotFind();
+    void slotReplace();
+    void slotAutoWrap(bool checked);
+    void slotLineNumber(bool checked);
+    void slotBgColor();
+    void slotViewStatusBar(bool checked);
+    void slotViewToolBar(bool checked);
 
     // 查找/替换回调
     void doFind(const QString &text, bool caseSensitive);

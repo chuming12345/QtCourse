@@ -144,18 +144,18 @@ void QWMainWind::iniSignalSlots()
     connect(m_edit, &QPlainTextEdit::selectionChanged, this, &QWMainWind::on_txtEdit_selectionChanged);
     connect(m_edit->document(), &QTextDocument::modificationChanged, this, &QWMainWind::on_document_modified);
 
-    connect(actSave,        SIGNAL(triggered()),            this, SLOT(on_actSave_triggered()));
-    connect(actSaveAs,      SIGNAL(triggered()),            this, SLOT(on_actSaveAs_triggered()));
-    connect(actUndo,        SIGNAL(triggered()),            this, SLOT(on_actUndo_triggered()));
-    connect(actRedo,        SIGNAL(triggered()),            this, SLOT(on_actRedo_triggered()));
-    connect(actSelectAll,   SIGNAL(triggered()),            this, SLOT(on_actSelectAll_triggered()));
-    connect(actFind,        SIGNAL(triggered()),            this, SLOT(on_actFind_triggered()));
-    connect(actReplace,     SIGNAL(triggered()),            this, SLOT(on_actReplace_triggered()));
-    connect(actAutoWrap,    SIGNAL(toggled(bool)),          this, SLOT(on_actAutoWrap_triggered(bool)));
-    connect(actLineNumber,  SIGNAL(toggled(bool)),          this, SLOT(on_actLineNumber_triggered(bool)));
-    connect(actBgColor,     SIGNAL(triggered()),            this, SLOT(on_actBgColor_triggered()));
-    connect(actViewToolBar, SIGNAL(toggled(bool)),          this, SLOT(on_actViewToolBar_triggered(bool)));
-    connect(actViewStatusBar, SIGNAL(toggled(bool)),        this, SLOT(on_actViewStatusBar_triggered(bool)));
+    connect(actSave,        SIGNAL(triggered()),            this, SLOT(slotSave()));
+    connect(actSaveAs,      SIGNAL(triggered()),            this, SLOT(slotSaveAs()));
+    connect(actUndo,        SIGNAL(triggered()),            this, SLOT(slotUndo()));
+    connect(actRedo,        SIGNAL(triggered()),            this, SLOT(slotRedo()));
+    connect(actSelectAll,   SIGNAL(triggered()),            this, SLOT(slotSelectAll()));
+    connect(actFind,        SIGNAL(triggered()),            this, SLOT(slotFind()));
+    connect(actReplace,     SIGNAL(triggered()),            this, SLOT(slotReplace()));
+    connect(actAutoWrap,    SIGNAL(toggled(bool)),          this, SLOT(slotAutoWrap(bool)));
+    connect(actLineNumber,  SIGNAL(toggled(bool)),          this, SLOT(slotLineNumber(bool)));
+    connect(actBgColor,     SIGNAL(triggered()),            this, SLOT(slotBgColor()));
+    connect(actViewToolBar, SIGNAL(toggled(bool)),          this, SLOT(slotViewToolBar(bool)));
+    connect(actViewStatusBar, SIGNAL(toggled(bool)),        this, SLOT(slotViewStatusBar(bool)));
 }
 
 QWMainWind::QWMainWind(QWidget *parent) :
@@ -252,15 +252,15 @@ void QWMainWind::saveToFile(QString aFile)
     setTextModified(false);
 }
 
-void QWMainWind::on_actSave_triggered()
+void QWMainWind::slotSave()
 {
     if (fCurFileName.isEmpty())
-        on_actSaveAs_triggered();
+        slotSaveAs();
     else
         saveToFile(fCurFileName);
 }
 
-void QWMainWind::on_actSaveAs_triggered()
+void QWMainWind::slotSaveAs()
 {
     QString curPath = QCoreApplication::applicationDirPath();
     QString aFileName = QFileDialog::getSaveFileName(this, tr("另存为"), curPath,
@@ -327,33 +327,33 @@ void QWMainWind::on_actToolbarLab_triggered(bool checked)
 // ============================================================
 // 撤销 / 重做 / 全选
 // ============================================================
-void QWMainWind::on_actUndo_triggered()       { m_edit->undo(); }
-void QWMainWind::on_actRedo_triggered()       { m_edit->redo(); }
-void QWMainWind::on_actSelectAll_triggered()   { m_edit->selectAll(); }
+void QWMainWind::slotUndo()       { m_edit->undo(); }
+void QWMainWind::slotRedo()       { m_edit->redo(); }
+void QWMainWind::slotSelectAll()   { m_edit->selectAll(); }
 
 // ============================================================
 // 查找 / 替换
 // ============================================================
-void QWMainWind::on_actFind_triggered()
+void QWMainWind::slotFind()
 {
     if (!m_findDlg) {
         m_findDlg = new FindDialog(this);
-        connect(m_findDlg, SIGNAL(findNext(QString, bool)),
-                this, SLOT(doFind(QString, bool)));
+        connect(m_findDlg, &FindDialog::findNext,
+                this, &QWMainWind::doFind);
     }
     m_findDlg->show();
     m_findDlg->raise();
     m_findDlg->activateWindow();
 }
 
-void QWMainWind::on_actReplace_triggered()
+void QWMainWind::slotReplace()
 {
     if (!m_replaceDlg) {
         m_replaceDlg = new ReplaceDialog(this);
-        connect(m_replaceDlg, SIGNAL(findNext(QString, bool)),
-                this, SLOT(doFind(QString, bool)));
-        connect(m_replaceDlg, SIGNAL(replace(QString, QString, bool)),
-                this, SLOT(doReplace(QString, QString, bool)));
+        connect(m_replaceDlg, &ReplaceDialog::findNext,
+                this, &QWMainWind::doFind);
+        connect(m_replaceDlg, &ReplaceDialog::replace,
+                this, &QWMainWind::doReplace);
     }
     m_replaceDlg->show();
     m_replaceDlg->raise();
@@ -406,17 +406,17 @@ void QWMainWind::doReplace(const QString &find, const QString &replace, bool all
 // ============================================================
 // 自动换行 / 行号 / 背景色 / 视图
 // ============================================================
-void QWMainWind::on_actAutoWrap_triggered(bool checked)
+void QWMainWind::slotAutoWrap(bool checked)
 {
     m_edit->setLineWrapMode(checked ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
 }
 
-void QWMainWind::on_actLineNumber_triggered(bool checked)
+void QWMainWind::slotLineNumber(bool checked)
 {
     m_edit->setLineNumberVisible(checked);
 }
 
-void QWMainWind::on_actBgColor_triggered()
+void QWMainWind::slotBgColor()
 {
     QColor c = QColorDialog::getColor(m_edit->palette().color(QPalette::Base), this, "选择背景颜色");
     if (c.isValid()) {
@@ -426,12 +426,12 @@ void QWMainWind::on_actBgColor_triggered()
     }
 }
 
-void QWMainWind::on_actViewStatusBar_triggered(bool checked)
+void QWMainWind::slotViewStatusBar(bool checked)
 {
     ui->statusBar->setVisible(checked);
 }
 
-void QWMainWind::on_actViewToolBar_triggered(bool checked)
+void QWMainWind::slotViewToolBar(bool checked)
 {
     ui->mainToolBar->setVisible(checked);
 }
@@ -455,7 +455,7 @@ void QWMainWind::closeEvent(QCloseEvent *event)
             "文件已修改但尚未保存，是否保存？",
             QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         if (r == QMessageBox::Save) {
-            on_actSave_triggered();
+            slotSave();
             if (m_edit->document()->isModified()) { event->ignore(); return; }
         } else if (r == QMessageBox::Cancel) {
             event->ignore();

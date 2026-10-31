@@ -145,6 +145,11 @@ void QWMainWind::iniSignalSlots()
     connect(m_edit, &QPlainTextEdit::selectionChanged, this, &QWMainWind::on_txtEdit_selectionChanged);
     connect(m_edit->document(), &QTextDocument::modificationChanged, this, &QWMainWind::on_document_modified);
 
+    // 剪切/复制/粘贴：连接到真实编辑器 m_edit（.ui 中占位 txtEdit 已被 m_edit 取代，连接它无效）
+    connect(ui->actCut,   &QAction::triggered, m_edit, &QPlainTextEdit::cut);
+    connect(ui->actCopy,  &QAction::triggered, m_edit, &QPlainTextEdit::copy);
+    connect(ui->actPaste, &QAction::triggered, m_edit, &QPlainTextEdit::paste);
+
     connect(actSave,        SIGNAL(triggered()),            this, SLOT(slotSave()));
     connect(actSaveAs,      SIGNAL(triggered()),            this, SLOT(slotSaveAs()));
     connect(actUndo,        SIGNAL(triggered()),            this, SLOT(slotUndo()));

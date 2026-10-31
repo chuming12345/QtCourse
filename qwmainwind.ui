@@ -311,53 +311,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>actCut</sender>
-   <signal>triggered()</signal>
-   <receiver>txtEdit</receiver>
-   <slot>cut()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>256</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actCopy</sender>
-   <signal>triggered()</signal>
-   <receiver>txtEdit</receiver>
-   <slot>copy()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>256</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actPaste</sender>
-   <signal>triggered()</signal>
-   <receiver>txtEdit</receiver>
-   <slot>paste()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>256</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+  <!-- 剪切/复制/粘贴已在代码中连接到真实的 m_edit（QWTextEdit），此处不再连接占位 txtEdit -->
+</connections>
 </ui>

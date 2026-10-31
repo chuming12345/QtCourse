@@ -5,6 +5,7 @@
 #include "replacedialog.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QFontDialog>
@@ -214,9 +215,11 @@ void QWMainWind::on_actNew_triggered()
 
 void QWMainWind::on_actOpen_triggered()
 {
-    QString curPath = QCoreApplication::applicationDirPath();
+    QString curPath = m_lastDir.isEmpty() ? QCoreApplication::applicationDirPath() : m_lastDir;
+    QString selFilter = tr("文本文件(*.txt)");
     QString aFileName = QFileDialog::getOpenFileName(this, tr("打开一个文件"), curPath,
-                     "C++程序文件(*.cpp);;H头文件(*.h);;文本文件(*.txt);;所有文件(*.*)");
+                     "文本文件(*.txt);;C++程序文件(*.cpp);;H头文件(*.h);;所有文件(*.*)",
+                     &selFilter);
     if (aFileName.isEmpty())
         return;
 
@@ -230,6 +233,7 @@ void QWMainWind::on_actOpen_triggered()
     m_edit->setPlainText(aStream.readAll());
     aFile.close();
 
+    m_lastDir = QFileInfo(aFileName).absolutePath();
     updateCurFile(aFileName);
     m_edit->document()->setModified(false);
     setTextModified(false);
@@ -262,11 +266,13 @@ void QWMainWind::slotSave()
 
 void QWMainWind::slotSaveAs()
 {
-    QString curPath = QCoreApplication::applicationDirPath();
+    QString curPath = m_lastDir.isEmpty() ? QCoreApplication::applicationDirPath() : m_lastDir;
     QString aFileName = QFileDialog::getSaveFileName(this, tr("另存为"), curPath,
                      "文本文件(*.txt);;C++程序文件(*.cpp);;H头文件(*.h);;所有文件(*.*)");
-    if (!aFileName.isEmpty())
+    if (!aFileName.isEmpty()) {
+        m_lastDir = QFileInfo(aFileName).absolutePath();
         saveToFile(aFileName);
+    }
 }
 
 // ============================================================

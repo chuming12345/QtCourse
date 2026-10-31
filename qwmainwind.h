@@ -42,6 +42,7 @@ private:
 
     FindDialog   *m_findDlg    = nullptr;   // 查找对话框
     ReplaceDialog *m_replaceDlg = nullptr;   // 替换对话框
+    QString m_lastDir;                       // 最近使用的文件目录（打开/保存共用）
 
     void updateCurFile(QString aFile);// 更新当前文件名 + 状态栏
     void iniUI();                     // UI 初始化（含新增菜单/动作）

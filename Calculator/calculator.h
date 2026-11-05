@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QString>
+#include <QResizeEvent>
 
 class Calculator : public QWidget
 {
@@ -13,7 +14,8 @@ public:
     explicit Calculator(QWidget *parent = nullptr);
 
 protected:
-    void keyPressEvent(QKeyEvent *e) override;   // ⑤ 阶段：键盘事件
+    void keyPressEvent(QKeyEvent *e) override;    // ⑤ 阶段：键盘事件
+    void resizeEvent(QResizeEvent *event) override;   // 界面缩放时字体等比放大
 
 private slots:
     void digitClicked(const QString &digit);

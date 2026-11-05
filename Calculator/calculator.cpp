@@ -90,7 +90,7 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
         "QLineEdit { background: #1e2530; color: #ffffff; border-radius: 6px;"
         "            padding: 6px 10px; selection-background-color: #3a7afe; }"
         "QPushButton { background: #f0f2f5; color: #222;"
-        "              border-radius: 8px; min-height: 40px; font-size: 16px; }"
+        "              border-radius: 8px; min-height: 40px; }"
         "QPushButton:hover { background: #d7e3ff; }"
         "QPushButton:pressed { background: #3a7afe; color: #fff; }"
         "QPushButton#btnAdd, QPushButton#btnSub, QPushButton#btnMul, QPushButton#btnDiv {"
@@ -106,6 +106,22 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
     connect(btnMul, &QPushButton::clicked, this, [this](){ multiplicativeOperatorPressed("*"); });
     connect(btnDiv, &QPushButton::clicked, this, [this](){ multiplicativeOperatorPressed("/"); });
     connect(btnEqual, &QPushButton::clicked, this, &Calculator::equalPressed);
+    resizeEvent(nullptr);   // 初始化字体尺寸（首次按窗口大小设置）
+}
+
+void Calculator::resizeEvent(QResizeEvent *event)
+{
+    if (event) QWidget::resizeEvent(event);
+    // 窗口放大时，字体随窗口高度等比放大，避免数字/符号显得过小
+    const int h = height();
+    const int btnSize  = qMax(16, h / 14);   // 按钮字号
+    const int dispSize = qMax(24, h / 9);     // 显示框字号（更大）
+    QFont btnFont; btnFont.setPointSize(btnSize);
+    for (QPushButton *b : findChildren<QPushButton *>())
+        b->setFont(btnFont);
+    QFont dispFont = display->font();
+    dispFont.setPointSize(dispSize);
+    display->setFont(dispFont);
 }
 
 void Calculator::digitClicked(const QString &digit)

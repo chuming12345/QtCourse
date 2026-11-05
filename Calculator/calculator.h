@@ -15,12 +15,20 @@ public:
 private slots:
     void digitClicked(const QString &digit);
     void decimalPointPressed();
+    void additiveOperatorPressed(const QString &op);
+    void multiplicativeOperatorPressed(const QString &op);
+    void equalPressed();
     void backspacePressed();
     void clearAll();
 
 private:
+    void abortOperation();
+    bool calculate(double right, const QString &op);
+
     QLineEdit *display = nullptr;
-    bool waitingForOperand = true;   // ② 阶段：引入“等待操作数”状态
+    double waitingOperand = 0.0;
+    QString pendingOperator;
+    bool waitingForOperand = true;
 };
 
 #endif // CALCULATOR_H

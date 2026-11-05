@@ -6,7 +6,7 @@
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent)
 {
-    // ② 阶段：沿用 ① 的 UI，输入逻辑增加 waitingForOperand 状态
+    // ③ 阶段：实现四则运算与等待操作数状态管理
     // 显示框
     display = new QLineEdit("0");
     display->setReadOnly(true);
@@ -66,6 +66,11 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(btnEqual, 5, 3);
     setLayout(mainLayout);
     setWindowTitle("Calculator");
+    connect(btnAdd, &QPushButton::clicked, this, [this](){ additiveOperatorPressed("+"); });
+    connect(btnSub, &QPushButton::clicked, this, [this](){ additiveOperatorPressed("-"); });
+    connect(btnMul, &QPushButton::clicked, this, [this](){ multiplicativeOperatorPressed("*"); });
+    connect(btnDiv, &QPushButton::clicked, this, [this](){ multiplicativeOperatorPressed("/"); });
+    connect(btnEqual, &QPushButton::clicked, this, &Calculator::equalPressed);
 }
 
 void Calculator::digitClicked(const QString &digit)
@@ -88,7 +93,47 @@ void Calculator::decimalPointPressed()
         waitingForOperand = false;
         return;
     }
-    display->setText(display->text() + ".");   // ② 阶段：仍未限制重复小数点
+    display->setText(display->text() + ".");   // ③ 阶段：仍未限制重复小数点
+}
+
+void Calculator::additiveOperatorPressed(const QString &op)
+{
+    double operand = display->text().toDouble();
+    if (!pendingOperator.isEmpty()) {
+        if (!calculate(operand, pendingOperator))
+            return;
+        display->setText(QString::number(waitingOperand));
+    } else {
+        waitingOperand = operand;
+    }
+    pendingOperator = op;
+    waitingForOperand = true;
+}
+
+void Calculator::multiplicativeOperatorPressed(const QString &op)
+{
+    double operand = display->text().toDouble();
+    if (!pendingOperator.isEmpty()) {
+        if (!calculate(operand, pendingOperator))
+            return;
+        display->setText(QString::number(waitingOperand));
+    } else {
+        waitingOperand = operand;
+    }
+    pendingOperator = op;
+    waitingForOperand = true;
+}
+
+void Calculator::equalPressed()
+{
+    double operand = display->text().toDouble();
+    if (pendingOperator.isEmpty())
+        return;
+    if (!calculate(operand, pendingOperator))
+        return;
+    pendingOperator.clear();
+    display->setText(QString::number(waitingOperand));
+    waitingForOperand = true;
 }
 
 void Calculator::backspacePressed()
@@ -105,5 +150,23 @@ void Calculator::backspacePressed()
 void Calculator::clearAll()
 {
     display->setText("0");
+    waitingOperand = 0.0;
+    pendingOperator.clear();
     waitingForOperand = true;
+}
+
+void Calculator::abortOperation()
+{
+    clearAll();
+    display->setText("零除错误");
+}
+
+bool Calculator::calculate(double right, const QString &op)
+{
+    double left = waitingOperand;
+    if (op == "+")      waitingOperand = left + right;
+    else if (op == "-") waitingOperand = left - right;
+    else if (op == "*") waitingOperand = left * right;
+    else if (op == "/") waitingOperand = left / right;   // ③ 阶段：未处理除零
+    return true;
 }

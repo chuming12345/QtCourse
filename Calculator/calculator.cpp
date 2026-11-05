@@ -6,7 +6,7 @@
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent)
 {
-    // ③ 阶段：实现四则运算与等待操作数状态管理
+    // ④ 阶段：修复连续小数点 / 除零 / 结果后继续输入等边界问题
     // 显示框
     display = new QLineEdit("0");
     display->setReadOnly(true);
@@ -93,7 +93,8 @@ void Calculator::decimalPointPressed()
         waitingForOperand = false;
         return;
     }
-    display->setText(display->text() + ".");   // ③ 阶段：仍未限制重复小数点
+    if (!display->text().contains('.'))   // ④ 修复：已含小数点则不再添加
+        display->setText(display->text() + ".");
 }
 
 void Calculator::additiveOperatorPressed(const QString &op)
@@ -167,6 +168,9 @@ bool Calculator::calculate(double right, const QString &op)
     if (op == "+")      waitingOperand = left + right;
     else if (op == "-") waitingOperand = left - right;
     else if (op == "*") waitingOperand = left * right;
-    else if (op == "/") waitingOperand = left / right;   // ③ 阶段：未处理除零
+    else if (op == "/") {
+        if (right == 0.0) { abortOperation(); return false; }  // ④ 修复：除零保护
+        waitingOperand = left / right;
+    }
     return true;
 }

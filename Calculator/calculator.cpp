@@ -7,7 +7,7 @@
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent)
 {
-    // ⑤ 阶段：在 ④ 基础上补充键盘事件（复用鼠标逻辑）
+    // ⑥ 阶段：样式表美化 + 焦点设置（最终版）
     // 显示框
     display = new QLineEdit("0");
     display->setReadOnly(true);
@@ -37,6 +37,25 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
     QPushButton *btn7 = new QPushButton("7");
     QPushButton *btn8 = new QPushButton("8");
     QPushButton *btn9 = new QPushButton("9");
+    btnBackspace->setObjectName("btnBackspace");
+    btnClear->setObjectName("btnClear");
+    btnDiv->setObjectName("btnDiv");
+    btnMul->setObjectName("btnMul");
+    btnSub->setObjectName("btnSub");
+    btnAdd->setObjectName("btnAdd");
+    btnEqual->setObjectName("btnEqual");
+    btnDot->setObjectName("btnDot");
+    btn0->setObjectName("btn0");
+    btn1->setObjectName("btn1");
+    btn2->setObjectName("btn2");
+    btn3->setObjectName("btn3");
+    btn4->setObjectName("btn4");
+    btn5->setObjectName("btn5");
+    btn6->setObjectName("btn6");
+    btn7->setObjectName("btn7");
+    btn8->setObjectName("btn8");
+    btn9->setObjectName("btn9");
+
     connect(btn0, &QPushButton::clicked, this, [this](){ digitClicked("0"); });
     connect(btn1, &QPushButton::clicked, this, [this](){ digitClicked("1"); });
     connect(btn2, &QPushButton::clicked, this, [this](){ digitClicked("2"); });
@@ -66,6 +85,21 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(btnDot, 5, 2);
     mainLayout->addWidget(btnEqual, 5, 3);
     setLayout(mainLayout);
+    setStyleSheet(
+        "QWidget { font-family: 'Segoe UI', 'Microsoft YaHei'; }"
+        "QLineEdit { background: #1e2530; color: #ffffff; border-radius: 6px;"
+        "            padding: 6px 10px; selection-background-color: #3a7afe; }"
+        "QPushButton { background: #f0f2f5; color: #222;"
+        "              border-radius: 8px; min-height: 40px; font-size: 16px; }"
+        "QPushButton:hover { background: #d7e3ff; }"
+        "QPushButton:pressed { background: #3a7afe; color: #fff; }"
+        "QPushButton#btnAdd, QPushButton#btnSub, QPushButton#btnMul, QPushButton#btnDiv {"
+        "              background: #ffe0b2; }"
+        "QPushButton#btnEqual { background: #3a7afe; color: #fff; }"
+        "QPushButton#btnClear { background: #ffd0d0; }"
+    );
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
     setWindowTitle("Calculator");
     connect(btnAdd, &QPushButton::clicked, this, [this](){ additiveOperatorPressed("+"); });
     connect(btnSub, &QPushButton::clicked, this, [this](){ additiveOperatorPressed("-"); });

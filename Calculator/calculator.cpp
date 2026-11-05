@@ -112,10 +112,12 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
 void Calculator::resizeEvent(QResizeEvent *event)
 {
     if (event) QWidget::resizeEvent(event);
-    // 窗口放大时，字体随窗口高度等比放大，避免数字/符号显得过小
+    // 字体随窗口尺寸等比缩放：以默认窗口高度(约500px)为基准，
+    // 窗口较小时字号按比例缩小、窗口放大时字号按比例增大，避免初始就过大或放大后才变大。
     const int h = height();
-    const int btnSize  = qMax(16, h / 14);   // 按钮字号
-    const int dispSize = qMax(24, h / 9);     // 显示框字号（更大）
+    const double scale = h / 500.0;                  // 相对默认窗口高度的比例系数
+    const int btnSize  = qMax(14, int(18 * scale));  // 按钮字号随窗口等比（窗口小则字小）
+    const int dispSize = qMax(18, int(28 * scale));  // 显示框字号随窗口等比（略大于按钮）
     QFont btnFont; btnFont.setPointSize(btnSize);
     for (QPushButton *b : findChildren<QPushButton *>())
         b->setFont(btnFont);

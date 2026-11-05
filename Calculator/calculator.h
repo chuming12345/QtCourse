@@ -12,6 +12,9 @@ class Calculator : public QWidget
 public:
     explicit Calculator(QWidget *parent = nullptr);
 
+protected:
+    void keyPressEvent(QKeyEvent *e) override;   // ⑤ 阶段：键盘事件
+
 private slots:
     void digitClicked(const QString &digit);
     void decimalPointPressed();

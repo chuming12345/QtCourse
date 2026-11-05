@@ -212,25 +212,28 @@ bool Calculator::calculate(double right, const QString &op)
 
 void Calculator::keyPressEvent(QKeyEvent *e)
 {
+    // 小键盘数字键在 Qt 中映射为 Qt::Key_0..Qt::Key_9（并带 Qt::KeypadModifier 修饰符），
+    // 因此无需单独枚举 NumPad，同一分支即可同时覆盖主键盘与小键盘。
     switch (e->key()) {
-    case Qt::Key_0: case Qt::Key_NumPad0: digitClicked("0"); break;
-    case Qt::Key_1: case Qt::Key_NumPad1: digitClicked("1"); break;
-    case Qt::Key_2: case Qt::Key_NumPad2: digitClicked("2"); break;
-    case Qt::Key_3: case Qt::Key_NumPad3: digitClicked("3"); break;
-    case Qt::Key_4: case Qt::Key_NumPad4: digitClicked("4"); break;
-    case Qt::Key_5: case Qt::Key_NumPad5: digitClicked("5"); break;
-    case Qt::Key_6: case Qt::Key_NumPad6: digitClicked("6"); break;
-    case Qt::Key_7: case Qt::Key_NumPad7: digitClicked("7"); break;
-    case Qt::Key_8: case Qt::Key_NumPad8: digitClicked("8"); break;
-    case Qt::Key_9: case Qt::Key_NumPad9: digitClicked("9"); break;
-    case Qt::Key_Period: case Qt::Key_NumPad_Decimal: decimalPointPressed(); break;
-    case Qt::Key_Plus: case Qt::Key_NumPad_Add:       additiveOperatorPressed("+"); break;
-    case Qt::Key_Minus: case Qt::Key_NumPad_Subtract: additiveOperatorPressed("-"); break;
-    case Qt::Key_Asterisk: case Qt::Key_NumPad_Multiply: multiplicativeOperatorPressed("*"); break;
-    case Qt::Key_Slash: case Qt::Key_NumPad_Divide:      multiplicativeOperatorPressed("/"); break;
+    case Qt::Key_0: digitClicked("0"); break;
+    case Qt::Key_1: digitClicked("1"); break;
+    case Qt::Key_2: digitClicked("2"); break;
+    case Qt::Key_3: digitClicked("3"); break;
+    case Qt::Key_4: digitClicked("4"); break;
+    case Qt::Key_5: digitClicked("5"); break;
+    case Qt::Key_6: digitClicked("6"); break;
+    case Qt::Key_7: digitClicked("7"); break;
+    case Qt::Key_8: digitClicked("8"); break;
+    case Qt::Key_9: digitClicked("9"); break;
+    case Qt::Key_Period: decimalPointPressed(); break;
+    case Qt::Key_Plus:       additiveOperatorPressed("+"); break;
+    case Qt::Key_Minus:      additiveOperatorPressed("-"); break;
+    case Qt::Key_Asterisk:   multiplicativeOperatorPressed("*"); break;
+    case Qt::Key_Slash:      multiplicativeOperatorPressed("/"); break;
     case Qt::Key_Equal: case Qt::Key_Return: case Qt::Key_Enter: equalPressed(); break;
-    case Qt::Key_Backspace: backspacePressed(); break;
-    case Qt::Key_Escape:    clearAll(); break;
+    case Qt::Key_Backspace:  backspacePressed(); break;
+    case Qt::Key_Escape:     clearAll(); break;
+    case Qt::Key_Delete:     clearAll(); break;
     default: QWidget::keyPressEvent(e);
     }
 }

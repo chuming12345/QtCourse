@@ -6,7 +6,7 @@
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent)
 {
-    // ① 初版：搭建 UI 与按钮布局
+    // ② 阶段：沿用 ① 的 UI，输入逻辑增加 waitingForOperand 状态
     // 显示框
     display = new QLineEdit("0");
     display->setReadOnly(true);
@@ -70,19 +70,31 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent)
 
 void Calculator::digitClicked(const QString &digit)
 {
-    if (display->text() == "0")
+    if (waitingForOperand) {
         display->setText(digit);
-    else
-        display->setText(display->text() + digit);
+        waitingForOperand = false;
+    } else {
+        if (display->text() == "0")
+            display->setText(digit);
+        else
+            display->setText(display->text() + digit);
+    }
 }
 
 void Calculator::decimalPointPressed()
 {
-    display->setText(display->text() + ".");   // ① 阶段：尚未限制重复小数点
+    if (waitingForOperand) {
+        display->setText("0.");
+        waitingForOperand = false;
+        return;
+    }
+    display->setText(display->text() + ".");   // ② 阶段：仍未限制重复小数点
 }
 
 void Calculator::backspacePressed()
 {
+    if (waitingForOperand)
+        return;
     QString text = display->text();
     text.chop(1);
     if (text.isEmpty())
@@ -93,4 +105,5 @@ void Calculator::backspacePressed()
 void Calculator::clearAll()
 {
     display->setText("0");
+    waitingForOperand = true;
 }

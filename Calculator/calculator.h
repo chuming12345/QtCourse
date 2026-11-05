@@ -20,6 +20,7 @@ private slots:
 
 private:
     QLineEdit *display = nullptr;
+    bool waitingForOperand = true;   // ② 阶段：引入“等待操作数”状态
 };
 
 #endif // CALCULATOR_H
